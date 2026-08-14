@@ -1,0 +1,75 @@
+{
+  "name": "Telegram Message Alerts",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "https://news.google.com/rss?hl=en-BD&gl=BD&ceid=BD:en"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -112
+      ],
+      "id": "050d7e9a-f374-4634-9234-f22e7ae23fb0",
+      "name": "RSS Feed Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "={{ $json.title }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        -112
+      ],
+      "id": "c2b8dd29-9864-455b-9e9d-11cd23e2b42f",
+      "name": "Send a text message",
+      "webhookId": "ca321055-213a-474a-99bb-4922ee6d960d",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "RSS Feed Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "dcef2a2a-b2d4-4cee-8349-89dc8a408cd7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "OF6LnPIeuMUJkAkZ",
+  "tags": []
+}
