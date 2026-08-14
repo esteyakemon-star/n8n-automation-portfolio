@@ -1,0 +1,387 @@
+{
+  "name": "elite create",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "Elite-create-Facebook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        -96
+      ],
+      "id": "4a1b9054-cd2d-4f01-b34b-7a459aebdd38",
+      "name": "Webhook",
+      "webhookId": "0ec44cb0-14e1-4307-b00e-4a3422825eb1"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query.hub_challenge }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -144,
+        -224
+      ],
+      "id": "91e1d5fd-8478-4a6b-8a1c-362ebc3a6fad",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "87fdf75b-402f-4f87-b858-fcd4245a3aab",
+              "leftValue": "={{ $json.body.entry[0].messaging[0].message.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -144,
+        -16
+      ],
+      "id": "a3d208f8-51af-4cb6-b251-8df30a902c42",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v26.0/{{ $('Filter').item.json.body.entry[0].id }}/messages",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "EAAMuIPMk0M4BSELMiCuiiCTudPZBA7p9uaJoDXRB9KJrZBNzBBKicPIonMiJFk6oxAqm6HS6KmufO7kD2laDfHcfZAFaCOfHchNvO6nuSQurZApfrR6OT9zXnxGc0Sru4Nk54VT2VgppEQnjk9GHzVQUJ5vgn6dpFF7CbQJeyBDK3LlS2VCoEZBOEpK49c56yEEt5AC8RAZCBCaS4q5yzB06jvyAZDZD"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient\": {\n    \"id\": \"{{ $('Filter').item.json.body.entry[0].messaging[0].sender.id }}\"\n  },\n  \"messaging_type\": \"RESPONSE\",\n  \"message\": {\n    \"text\": {{ JSON.stringify($json.output) }}\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        432,
+        -160
+      ],
+      "id": "11089dd1-6e76-47fd-ab5b-0da18f573f53",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.entry[0].messaging[0].message.text }}",
+        "options": {
+          "systemMessage": "You are an expert AI Sales & Customer Support Assistant for \"Elite Crete Bangladesh\", the premier epoxy resin supplier, manufacturer, and industrial/decorative flooring service provider in Bangladesh.\n\n### YOUR GOAL:\nProvide polite, professional, informative, and sales-focused customer support in conversational Bengali (or Banglish/English if the user messages in those languages). Answer queries regarding flooring solutions, epoxy/PU resin products, pricing logic, service quality, and encourage clients to book a \"Site Survey\" or request a direct quote.\n\n---\n\n### KEY COMPANY INFORMATION:\n1. Company Name: Elite Crete Bangladesh\n2. Core Offerings:\n   - Industrial Epoxy & PU Flooring (Hygienic, Chemical-resistant, Heavy-duty)\n   - Decorative Flooring: 3D Epoxy, Metallic Epoxy, Flake Flooring, Stamp Concrete\n   - Specialized Flooring: Car Parking Flooring, Conductive Epoxy/PU, Polished Concrete, Super Flat Flooring, Floor Hardener, Sports Flooring (Indoor/Outdoor)\n   - Extra Services: Water Proofing, Fireproof Paint & Coating, Art & Craft Epoxy Resin, River Table Materials.\n3. Brands & Partners: Authorized applicators/distributors for Elite Crete USA, BASF, DUCON, VIACOR, PIDILITE (Dr. Fixit), etc.\n4. Experience & Service Area: Operating since 2007 (1588+ happy clients, 4548+ projects completed). We serve nationwide across all of Bangladesh (outside Dhaka as well).\n5. Contact Details:\n   - Phone / Hotlines: +880 1888 818 499, +880 1844 652 494\n   - Email: info@elitecrete.com.bd\n   - Location: Family Park (Level-12), Flat: 12/A, 99 DOHS Main Road, Kalshi, Dhaka-1216.\n\n---\n\n### GUIDELINES FOR ANSWERING CUSTOMER QUESTIONS:\n\n1. PRICING & COST QUESTIONS (দাম / প্রাইস সম্পর্কিত প্রশ্ন):\n   - Principle: Epoxy & PU flooring prices depend on specific factors like total area size (sq. ft.), substrate/floor condition, required thickness (mm/micron), and chosen system type.\n   - Response Strategy: Always explain that prices are customized per sq. ft. based on these technical factors. Never guess an exact single number; offer to schedule an ON-SITE SURVEY or ask for their project location, estimated square footage, and current floor status to give an accurate quote.\n\n2. SERVICE QUALITY & DURABILITY (কোয়ালিটি ও স্থায়ীত্ব সম্পর্কিত প্রশ্ন):\n   - Highlight that with proper diamond grinding substrate preparation and global-standard materials (USA, Germany, UK standards), Elite Crete floors last 10 to 20+ years.\n   - Emphasize seamless, dust-free, heavy load-bearing, non-porous, and chemical-resistant features (ideal for pharmaceuticals, garment factories, food plants, car parks, and homes).\n\n3. LOCATION / OUTSIDE DHAKA (সার্ভিস এরিয়া সম্পর্কিত প্রশ্ন):\n   - Confirm clearly that Elite Crete operates ALL OVER BANGLADESH (Dhaka, Chittagong, Gazipur, Narayanganj, Khulna, Rajshahi, etc.).\n\n4. CALL TO ACTION (CTA):\n   - Every helpful response should end with a warm invitation to talk directly via call/WhatsApp or request a Free Site Visit. \n   - Example CTA: \"আপনার ফ্লোরের সঠিক মেজারমেন্ট ও এস্টিমেট জানতে আপনার লোকেশন এবং স্কয়ার ফিট আমাদের জানান, অথবা কল করুন: +8801888818499 এ।\"\n\n---\n\n### LANGUAGE & TONALITY:\n- Use polite, professional, and helpful Bengali (standard polite language like \"আপনি\", \"ধন্যবাদ\").\n- Keep replies structured (use bullet points when explaining multiple services).\n- Keep text length optimal for Messenger/Facebook chat (concise and easy to read on smartphones).\ncurrent date and time : {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        64,
+        -160
+      ],
+      "id": "d7185226-3599-44e3-9890-7a44299c9284",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        208
+      ],
+      "id": "73a2bce9-a790-4c3d-8675-57cbefa2a591",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZWU0OjlF4glPtGup",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.entry[0].messaging[0].sender.id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        128,
+        48
+      ],
+      "id": "9e929d10-3906-4031-82ec-64e65cc92d2f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ubB7h0fo-cEHfCn1clxehkqpjsHuuXu-cw72kWQRgBk",
+          "mode": "list",
+          "cachedResultName": "Elite_create",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ubB7h0fo-cEHfCn1clxehkqpjsHuuXu-cw72kWQRgBk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Service_book",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ubB7h0fo-cEHfCn1clxehkqpjsHuuXu-cw72kWQRgBk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        288,
+        64
+      ],
+      "id": "2b662028-888a-4d9f-842d-0b02c5aba55f",
+      "name": "Service Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ugHG4EIiT03RIuwZ",
+          "name": "Google Sheets - Fountech (new)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ubB7h0fo-cEHfCn1clxehkqpjsHuuXu-cw72kWQRgBk",
+          "mode": "list",
+          "cachedResultName": "Elite_create",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ubB7h0fo-cEHfCn1clxehkqpjsHuuXu-cw72kWQRgBk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 760517681,
+          "mode": "list",
+          "cachedResultName": "Booking_request",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ubB7h0fo-cEHfCn1clxehkqpjsHuuXu-cw72kWQRgBk/edit#gid=760517681"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Phon": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Phon', ``, 'string') }}",
+            "Email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email', ``, 'string') }}",
+            "Address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Address', ``, 'string') }}",
+            "Requested_Date": "={{ $now.format('yyyy-MM-dd') }}",
+            "Service Request": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Service_Request', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phon",
+              "displayName": "Phon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Requested_Date",
+              "displayName": "Requested_Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Service Request",
+              "displayName": "Service Request",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        64
+      ],
+      "id": "4d5b4556-11da-4f7c-b75f-3b1e67562067",
+      "name": "Booking",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ugHG4EIiT03RIuwZ",
+          "name": "Google Sheets - Fountech (new)"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Service Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Booking": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "3d8339d6-2e43-4efe-8940-720ab5854293",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "83f6e8568b3fd8583663f83005d86fdf5cd76e19f2152b9c70dde0e41f6b98b0"
+  },
+  "nodeGroups": [],
+  "id": "DnhP4hb48AjzB475",
+  "tags": []
+}
