@@ -1,0 +1,74 @@
+{
+  "name": "Daily Reminder",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 14
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -224,
+        -64
+      ],
+      "id": "2a975d21-9735-41a8-8f59-ca364734bae5",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "8688786478",
+        "text": "⏰ Good morning! Don't forget to check today's tasks.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -16,
+        -64
+      ],
+      "id": "738dfa43-9d99-4114-87a9-b609c0f79095",
+      "name": "Send a text message",
+      "webhookId": "ea6134d9-433e-4699-a528-dcd5bfc0d74f",
+      "credentials": {
+        "telegramApi": {
+          "id": "lLHD71gzo1r3qk3f",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "62503065-c5b1-4aab-a626-96f342e8ca27",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "83f6e8568b3fd8583663f83005d86fdf5cd76e19f2152b9c70dde0e41f6b98b0"
+  },
+  "nodeGroups": [],
+  "id": "2YWPRNpyoxXeZSup",
+  "tags": []
+}
