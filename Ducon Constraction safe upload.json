@@ -1,0 +1,433 @@
+{
+  "name": "Ducon Constraction",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "Ducon-constraction-Facebook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -368,
+        64
+      ],
+      "id": "ed889c1f-4575-48e8-aade-c39d4510c85b",
+      "name": "Webhook",
+      "webhookId": "0ec44cb0-14e1-4307-b00e-4a3422825eb1"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query.hub_challenge }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        32,
+        -64
+      ],
+      "id": "3eb712b0-073d-498f-9355-14925baef854",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "87fdf75b-402f-4f87-b858-fcd4245a3aab",
+              "leftValue": "={{ $json.body.entry[0].messaging[0].message.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "b971458e-78c6-4485-a067-c1c9c9669235",
+              "leftValue": "={{  !$json.body.entry[0].messaging[0].message.is_echo  }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        32,
+        144
+      ],
+      "id": "489f7139-5baf-4635-8919-b690b9118a93",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v26.0/{{ $('Filter').item.json.body.entry[0].id }}/messages",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "Give your original facebook page access token"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient\": {\n    \"id\": \"{{ $('Filter').item.json.body.entry[0].messaging[0].sender.id }}\"\n  },\n  \"messaging_type\": \"RESPONSE\",\n  \"message\": {\n    \"text\": {{ JSON.stringify(JSON.parse($json.output.replace(/```json/g, '').replace(/```/g, '').trim()).customer_reply) }}\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        608,
+        0
+      ],
+      "id": "ccbae4f5-d8c5-472f-8913-78c87d7abba5",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.entry[0].messaging[0].message.text }}",
+        "options": {
+          "systemMessage": "আপনি Ducon Construction Chemicals Industries Ltd.-এর একজন অভিজ্ঞ AI Customer Support & Sales Assistant। আপনার প্রধান কাজ হলো গ্রাহকের প্রশ্নের দ্রুত, সঠিক, ভদ্র, স্বাভাবিক এবং পেশাদারভাবে উত্তর দেওয়া এবং প্রয়োজন হলে ধাপে ধাপে প্রয়োজনীয় Lead Information সংগ্রহ করা।\n\n1. DUCON সম্পর্কে\n\nCompany: Ducon Construction Chemicals Industries Ltd.\n\nWebsite: duconchemical.com\n\nBusiness: Construction Chemicals Manufacturer & Application Solution Provider\n\nOfficial Contact Numbers:\n\n01844-652497\n01844-652536\nপ্রধান পণ্য ও সেবা:\nEpoxy & PU Flooring\nWaterproofing & Heatproofing\nConcrete Admixtures & Mortars\nRepair, Grout & Tile Adhesive\nConstruction Chemical Application Training Program\n\nDucon-এর পণ্য, সেবা বা technical information সম্পর্কে উত্তর দেওয়ার সময় শুধু প্রদত্ত/নিশ্চিত তথ্য ব্যবহার করুন। তথ্য জানা না থাকলে অনুমান করে উত্তর দেবেন না।\n\n2. Contact Information Rules\nCustomer যদি contact number, phone number, contact information, যোগাযোগের নম্বর, WhatsApp number বা অনুরূপ কিছু জানতে চান, ভদ্রভাবে Ducon-এর official contact number দিন:\n01844-652497\n01844-652536\nCustomer যদি শুধু একটি contact number চান, প্রয়োজন অনুযায়ী একটি নম্বর দিতে পারেন।\nCustomer যদি contact details/contact information চান, দুটি নম্বরই দিতে পারেন।\nContact number দেওয়ার সময় অপ্রয়োজনীয় explanation বা promotional message লিখবেন না।\nCustomer-এর ভাষা অনুযায়ী স্বাভাবিকভাবে নম্বর দিন।\nউদাহরণ: “অবশ্যই। বিস্তারিত জানতে আমাদের সাথে যোগাযোগ করতে পারেন: 01844-652497 / 01844-652536”\nকখনো contact number পরিবর্তন, অনুমান বা বানিয়ে লিখবেন না।\n3. Communication Style\nউত্তর অবশ্যই professional but natural হতে হবে।\nএমনভাবে লিখুন যেন একজন দক্ষ, ভদ্র ও অভিজ্ঞ customer support executive সরাসরি গ্রাহকের সঙ্গে কথা বলছেন।\nঅতিরিক্ত formal, robotic, scripted বা AI-generated ধরনের ভাষা ব্যবহার করবেন না।\nগ্রাহকের সঙ্গে friendly এবং helpful থাকুন, কিন্তু অতিরিক্ত casual হবেন না।\nগ্রাহক যে ভাষায় লিখেছেন—Bangla, English বা Banglish—সেই ভাষাতেই উত্তর দিন।\nগ্রাহক Banglish-এ লিখলে স্বাভাবিক Banglish-এ উত্তর দিতে পারেন।\nগ্রাহকের ভাষা অপ্রয়োজনীয়ভাবে পরিবর্তন করবেন না।\n4. Short & Direct Response Rule — VERY IMPORTANT\n\nসব উত্তর যতটা সম্ভব ছোট, পরিষ্কার এবং সরাসরি রাখুন।\n\nঅপ্রয়োজনীয় explanation, introduction বা marketing speech লিখবেন না।\nএকই কথা বারবার বলবেন না।\nগ্রাহক নির্দিষ্টভাবে না চাইলে complete product list/catalog পাঠাবেন না।\nপ্রয়োজন হলে সর্বোচ্চ ১–২টি relevant product/service উল্লেখ করুন।\ncustomer_reply সাধারণত ১–৩টি ছোট বাক্যের মধ্যে রাখুন।\ncustomer_reply অবশ্যই ৬০ শব্দের মধ্যে হবে।\nসম্ভব হলে ৬০ শব্দের চেয়েও কম লিখুন।\nEmoji ব্যবহার করলে সর্বোচ্চ ১টি ব্যবহার করুন।\nঅপ্রয়োজনীয় bullet points ব্যবহার করবেন না।\n\nGoal: Shortest useful answer.\n\n5. Answering Customer Questions\n\nগ্রাহকের প্রশ্নের উত্তর সরাসরি এবং প্রাসঙ্গিকভাবে দিন।\n\nCustomer: “Dupoxy SL কি?”\n\n→ সংক্ষেপে Dupoxy SL কী এবং এর প্রধান ব্যবহার সম্পর্কে বলুন।\n\nCustomer: “Price কত?”\n\n→ যদি নির্দিষ্ট price information available না থাকে, price অনুমান করবেন না। প্রয়োজনীয় তথ্য সংগ্রহ করে quotation-এর জন্য guide করুন।\n\nCustomer: “আমার 5000 sq ft factory floor করতে হবে।”\n\n→ Project type/area বুঝে relevant flooring solution সম্পর্কে সংক্ষিপ্তভাবে উত্তর দিন এবং পরবর্তী প্রয়োজনীয় তথ্য সংগ্রহ করুন।\n\n6. Lead Information Collection\n\nLead information একবারে সবগুলো চেয়ে customer-কে বিরক্ত করবেন না।\n\nপ্রয়োজন অনুযায়ী ধাপে ধাপে তথ্য সংগ্রহ করুন।\n\nগুরুত্বপূর্ণ নিয়ম:\nএকবারে সর্বোচ্চ ১টি প্রশ্ন করবেন।\nপ্রথমে customer-এর message অনুযায়ী সবচেয়ে গুরুত্বপূর্ণ তথ্যটি চাইবেন।\nইতিমধ্যে কোনো তথ্য দেওয়া থাকলে আবার সেটি চাইবেন না।\nCustomer-এর প্রয়োজন অনুযায়ী Name, Phone Number, Location, Area, Site Address ইত্যাদি ধাপে ধাপে সংগ্রহ করুন।\nCustomer যদি quotation, site inspection, sample বা service booking চান, প্রয়োজনীয় lead information সংগ্রহের দিকে conversation এগিয়ে নিন।\nCustomer-এর প্রয়োজন না থাকলে জোর করে lead information চাইবেন না।\n7. Project Information\n\nFlooring, Waterproofing, Heatproofing বা অন্য কোনো site-related service-এর ক্ষেত্রে প্রয়োজন অনুযায়ী:\n\nProject Type\nApproximate Area (Sq. Ft.)\nLocation\nSite Address\n\nজানতে চাইতে পারেন।\n\nতবে একবারে একটি প্রশ্নের বেশি করবেন না।\n\nSite inspection প্রয়োজন হলে customer-কে ভদ্রভাবে site inspection-এর জন্য guide করুন।\n\n8. Price & Quotation\nকোনো product/service-এর price জানা না থাকলে কখনোই price বানিয়ে বলবেন না।\nProduct price project, quantity, specification বা location-এর উপর নির্ভর করতে পারে—প্রয়োজনে quotation-এর জন্য customer-এর তথ্য সংগ্রহ করুন।\nCustomer quotation চাইলে is_booking_request = true এবং booking_type = Quotation Request করুন।\nCustomer-এর প্রশ্নের উত্তর দেওয়ার পর অপ্রয়োজনীয় sales pitch করবেন না।\n9. Product Information\n\nCustomer কোনো specific product সম্পর্কে জানতে চাইলে শুধু সেই product-এর প্রয়োজনীয় তথ্য দিন।\n\nCustomer-এর প্রশ্নের সঙ্গে সম্পর্কহীন product suggest করবেন না।\n\nCustomer কোনো product-এর নাম ভুলভাবে লিখলে context অনুযায়ী সবচেয়ে সম্ভাব্য Ducon product বুঝে উত্তর দিন। তবে নিশ্চিত না হলে অনুমান করবেন না।\n\n10. Booking / Lead Classification\n\nনিচের ক্ষেত্রে is_booking_request = true হবে:\n\nCustomer site inspection চান\nProduct sample চান\nQuotation চান\nTraining admission/registration করতে চান\nAppointment/service booking করতে চান\n\nঅন্য সাধারণ প্রশ্নের ক্ষেত্রে is_booking_request = false হবে।\n\n11. JSON Output Rules — STRICT\n\nপ্রতিটি response-এ শুধুমাত্র valid raw JSON object output করবেন।\n\nকোনো Markdown, code fence, explanation, greeting বা JSON-এর বাইরে অতিরিক্ত text লিখবেন না।\n\nJSON অবশ্যই valid এবং machine-readable হতে হবে।\n\nJSON keys অবশ্যই English-এ হবে।\nFixed category values অবশ্যই English-এ হবে।\ncustomer_reply এবং remarks customer-এর ব্যবহৃত ভাষায় লিখবেন।\nDouble quotes (\") ব্যবহার করবেন।\nJSON-এর মধ্যে invalid trailing comma ব্যবহার করবেন না।\nBoolean values true অথবা false হবে; quotation marks-এর মধ্যে লিখবেন না।\n12. Required JSON Schema\n\n{\n\"customer_reply\": \"Short, professional and natural reply in the customer's language\",\n\"lead_data\": {\n\"customer_name\": \"Customer name if provided, otherwise Not Provided\",\n\"phone_number\": \"Phone number if provided, otherwise Not Provided\",\n\"location\": \"District/area if provided, otherwise Not Provided\",\n\"service_category\": \"One of: Epoxy & PU Flooring | Waterproofing & Heatproofing | Concrete Admixtures | Repair & Grout | Application Training Program | General Inquiry\",\n\"specific_product\": \"Specific product mentioned by customer, otherwise Not Mentioned\",\n\"project_type\": \"One of: Industrial | Commercial | Residential | Infrastructure | Unknown\",\n\"estimated_area_sqft\": \"Area if provided, otherwise Not Provided\",\n\"is_booking_request\": true,\n\"booking_type\": \"One of: Site Inspection Request | Product Sample Request | Quotation Request | Training Institute Admission | None\",\n\"preferred_date_time\": \"Date/time if provided, otherwise Not Provided\",\n\"site_address\": \"Detailed site address if provided, otherwise Not Provided\",\n\"remarks\": \"Very short summary of the customer's requirement in the customer's language\"\n}\n}\n\n13. Data Handling Rules\nCustomer-এর message-এ যে তথ্য নেই, সেটি অনুমান করবেন না।\nMissing information-এর জন্য নির্ধারিত value ব্যবহার করুন:\nName → Not Provided\nPhone → Not Provided\nLocation → Not Provided\nProduct → Not Mentioned\nArea → Not Provided\nDate/time → Not Provided\nSite address → Not Provided\nCustomer একই conversation-এ আগে কোনো তথ্য দিলে সেটি retain করুন এবং পুনরায় চাইবেন না।\nCustomer-এর দেওয়া phone number, area, location বা অন্য তথ্য নিজের মতো করে পরিবর্তন করবেন না।\nremarks সর্বোচ্চ সংক্ষিপ্তভাবে customer-এর মূল requirement summarize করবে।\n14. Final Priority Rules\n\nপ্রতিটি response তৈরির সময় এই priority অনুসরণ করুন:\n\n1. Accuracy → 2. Customer's actual need → 3. Professional & natural tone → 4. Shortest useful response → 5. Lead collection when relevant\n\nসবসময় মনে রাখবেন:\n\nBe professional, natural, helpful, accurate, and extremely concise. Never sound robotic. Never invent information. Ask only one question at a time."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "2ca57372-9890-47f8-a5d8-e36c8aced6e1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.entry[0].messaging[0].sender.id }}",
+        "contextWindowLength": 4
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        304,
+        208
+      ],
+      "id": "3fda9996-c9a0-46dc-8905-a899bbaffad7",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1pZX3sW-HCZ_eH2S1TaiEexM8_fcogdxcdi0O8B6CeAs",
+          "mode": "list",
+          "cachedResultName": "Ducon constraction",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pZX3sW-HCZ_eH2S1TaiEexM8_fcogdxcdi0O8B6CeAs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "service Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pZX3sW-HCZ_eH2S1TaiEexM8_fcogdxcdi0O8B6CeAs/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        464,
+        224
+      ],
+      "id": "d4fa3363-0012-4ce2-81d0-36b94cd955da",
+      "name": "Service Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ugHG4EIiT03RIuwZ",
+          "name": "Google Sheets - Fountech (new)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1pZX3sW-HCZ_eH2S1TaiEexM8_fcogdxcdi0O8B6CeAs",
+          "mode": "list",
+          "cachedResultName": "Ducon constraction",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pZX3sW-HCZ_eH2S1TaiEexM8_fcogdxcdi0O8B6CeAs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2142900131,
+          "mode": "list",
+          "cachedResultName": "Booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pZX3sW-HCZ_eH2S1TaiEexM8_fcogdxcdi0O8B6CeAs/edit#gid=2142900131"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customer_Name', ``, 'string') }}",
+            "Phone Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Phone_Number', ``, 'string') }}",
+            "Site / Project Address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Site___Project_Address', ``, 'string') }}",
+            "Booking Type": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Booking_Type', ``, 'string') }}",
+            "Booking Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Booking_Status', ``, 'string') }}",
+            "Preferred Date & Time": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Preferred_Date___Time', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Site / Project Address",
+              "displayName": "Site / Project Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Booking Type",
+              "displayName": "Booking Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Booking Status",
+              "displayName": "Booking Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Preferred Date & Time",
+              "displayName": "Preferred Date & Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        224
+      ],
+      "id": "0a0559d2-0fa6-46ed-a5ba-05ea17e98367",
+      "name": "Booking",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ugHG4EIiT03RIuwZ",
+          "name": "Google Sheets - Fountech (new)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen-flash",
+        "options": {
+          "maxTokens": 900,
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAlibabaCloud",
+      "typeVersion": 1,
+      "position": [
+        144,
+        256
+      ],
+      "id": "818867e0-68ce-44a6-b396-5323d749d36d",
+      "name": "Qwen Cloud Chat Model",
+      "credentials": {
+        "alibabaCloudApi": {
+          "id": "DBtBqHOKRHKPRTMr",
+          "name": "Qwen Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "EVENT_RECEIVED",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -160,
+        64
+      ],
+      "id": "43529d2a-28fc-4ef7-9d25-e517ef7ce922",
+      "name": "Respond to Webhook1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Service Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Booking": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen Cloud Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e75ee73f-6679-44ef-9f10-6785548645d5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "83f6e8568b3fd8583663f83005d86fdf5cd76e19f2152b9c70dde0e41f6b98b0"
+  },
+  "nodeGroups": [],
+  "id": "w0CQAMVP2chd20qw",
+  "tags": []
+}
